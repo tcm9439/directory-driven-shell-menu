@@ -1,4 +1,5 @@
 menu_items=()
+menu_items_files=()
 menu_items_count=0
 sub_menu_count=0
 current_depth=0
@@ -21,9 +22,12 @@ readOperations(){
     # get all the directory in the directory
     dir_items=$(find . -mindepth 1 -maxdepth 1 -type d)
     menu_items=()
+    menu_items_files=()
     for item in $dir_items;
     do 
-        menu_items+=("Go to sub-menu of "$(basename $item))
+        file_name=$(basename $item)
+        menu_items_files+=($file_name)
+        menu_items+=("$(echo $file_name | sed -r 's/-/ /gi')")
     done
     sub_menu_count=${#menu_items[@]}
 
@@ -31,7 +35,9 @@ readOperations(){
     dir_items=$(find . -maxdepth 1 -type f)
     for item in $dir_items;
     do 
-        menu_items+=($(basename $item))
+        file_name=$(basename $item)
+        menu_items_files+=($file_name)
+        menu_items+=($file_name)
     done
 
     menu_items_count=${#menu_items[@]}
@@ -53,13 +59,13 @@ selectOperation(){
             # REPLY is a number
             if [ $REPLY -le $sub_menu_count ]; then
                 # Sub menu
-                choice=${menu_items[$((REPLY-1))]}
+                choice=${menu_items_files[$((REPLY-1))]}
                 is_sub_menu=true
                 goInTo $choice
                 break
             elif [ $REPLY -le $menu_items_count ]; then
                 # operation
-                choice=${menu_items[$((REPLY-1))]}
+                choice=${menu_items_files[$((REPLY-1))]}
                 echo
                 echo ----------------------------------
                 echo
@@ -94,7 +100,7 @@ initMeun(){
     cd $current_dir
 }
 
-start(){
+openMenu(){
     while true; do
         readOperations
         selectOperation
