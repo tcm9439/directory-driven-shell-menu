@@ -1,4 +1,4 @@
-# Directory Driven Menu fro Shell Scripts
+# Directory Driven Menu for Shell Scripts
 
 This is a simple helper script for creating a menu from a directory of scripts. 
 
